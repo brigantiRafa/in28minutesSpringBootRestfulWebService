@@ -1,15 +1,18 @@
 package com.in28minutes.rest.webservices.restful_web_services.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class UserResource {
@@ -27,13 +30,19 @@ public class UserResource {
     //GET /users/{id}
     //retrieveUser(int id)
     @GetMapping("/users/{id}")
-    public User retrieveUser(@PathVariable int id){
+    public EntityModel<User> retrieveUser(@PathVariable int id){
         User user = service.findOne(id);
-
         if (user == null)
             throw new UserNotFoundException("id-" + id);
 
-        return user;
+        EntityModel<User> userModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder linkTo =
+                linkTo(methodOn(this.getClass()).retrieveAllUsers());
+
+        userModel.add(linkTo.withRel("all-users"));
+
+        return userModel;
 
     }
 
@@ -60,5 +69,5 @@ public class UserResource {
 
 }
 
-//
+
 

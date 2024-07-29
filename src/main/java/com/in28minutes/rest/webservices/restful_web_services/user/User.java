@@ -9,15 +9,13 @@ public class User {
 
     private Integer id;
 
-    @Size(min = 2)
+    @Size(min=2, message = "Name should have at least 2 characters")
     private String name;
 
-    @Past
+    @Past(message = "Birth date should be in the past")
     private Date birthDate;
 
-    protected User() {
 
-    }
 
     public User(Integer id, String name, Date birthDate) {
         this.id = id;
